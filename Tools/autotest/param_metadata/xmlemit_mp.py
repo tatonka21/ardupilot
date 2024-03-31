@@ -21,7 +21,7 @@ class XmlEmitMP(Emit):
         self.f.write('''</Params>\n''')
         self.f.close()
         # sort and reformat XML
-        parser = etree.XMLParser(remove_blank_text=True)
+        parser = etree.XMLParser(remove_blank_text=True, resolve_entities=False)
         tree = etree.parse(self.mp_fname, parser)
         root = tree.getroot()
         vehicle = tree.find(self.gname)
