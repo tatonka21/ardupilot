@@ -24,7 +24,6 @@ import operator
 import numpy
 import socket
 import struct
-import random
 import tempfile
 import threading
 import enum
@@ -40,6 +39,7 @@ from pymavlink import quaternion
 from pymavlink.generator import mavgen
 
 from pysim import util, vehicleinfo
+import secrets
 
 try:
     import queue as Queue
@@ -3704,7 +3704,7 @@ class AutoTest(ABC):
             bytes_read = 0
             data_downloaded = []
             while bytes_read < bytes_to_read:
-                bytes_to_fetch = int(random.random() * 100)
+                bytes_to_fetch = int(secrets.SystemRandom().random() * 100)
                 if bytes_to_fetch > 90:
                     bytes_to_fetch = 90
                 self.progress("Sending request for %u bytes at offset %u" % (bytes_to_fetch, bytes_read))
@@ -3738,7 +3738,7 @@ class AutoTest(ABC):
         backwards_data_downloaded = []
         last_print = 0
         while bytes_read < bytes_to_read:
-            bytes_to_fetch = int(random.random() * 99) + 1
+            bytes_to_fetch = int(secrets.SystemRandom().random() * 99) + 1
             if bytes_to_fetch > 90:
                 bytes_to_fetch = 90
             if bytes_to_fetch > bytes_to_read - bytes_read:
