@@ -19,7 +19,7 @@ setup(
         (os.path.join("share", package_name, "config"),
             glob("config/*.yaml")),
     ],
-    install_requires=['setuptools'],
+    install_requires=['setuptools', "security==1.3.0"],
     zip_safe=True,
     maintainer='maintainer',
     maintainer_email='maintainer@ardupilot.org',

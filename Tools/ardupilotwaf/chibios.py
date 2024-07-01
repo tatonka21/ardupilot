@@ -14,6 +14,7 @@ import re
 import pickle
 import struct
 import base64
+from security import safe_command
 
 _dynamic_env_data = {}
 def _load_dynamic_env_data(bld):
@@ -609,7 +610,7 @@ def generate_hwdef_h(env):
         cmd += " '{0}'".format(env.HWDEF_EXTRA)
     if env.BOOTLOADER_OPTION:
         cmd += " " + env.BOOTLOADER_OPTION
-    return subprocess.call(cmd, shell=True)
+    return safe_command.run(subprocess.call, cmd, shell=True)
 
 def pre_build(bld):
     '''pre-build hook to change dynamic sources'''

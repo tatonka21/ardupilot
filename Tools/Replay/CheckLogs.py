@@ -4,6 +4,7 @@ run Replay over a set of logs to check for code regressions
 '''
 
 import optparse, os, sys
+from security import safe_command
 
 parser = optparse.OptionParser("CheckLogs")
 parser.add_option("--logdir", type='string', default='testlogs', help='directory of logs to use')
@@ -20,11 +21,11 @@ def run_cmd(cmd, dir=".", show=False, output=False, checkfail=True):
     if show:
         print("Running: '%s' in '%s'" % (cmd, dir))
     if output:
-        return Popen([cmd], shell=True, stdout=PIPE, cwd=dir).communicate()[0]
+        return safe_command.run(Popen, [cmd], shell=True, stdout=PIPE, cwd=dir).communicate()[0]
     elif checkfail:
         return check_call(cmd, shell=True, cwd=dir)
     else:
-        return call(cmd, shell=True, cwd=dir)
+        return safe_command.run(call, cmd, shell=True, cwd=dir)
 
 def run_replay(logfile):
     '''run Replay on one logfile'''
