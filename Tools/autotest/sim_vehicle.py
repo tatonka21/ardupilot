@@ -1602,7 +1602,7 @@ if cmd_opts.frame in ['scrimmage-plane', 'scrimmage-copter']:
                 if i in entities and k in instance_opts:
                     entities[i][k] = v
     config['entities'] = list(entities.values())
-    env = Environment(loader=FileSystemLoader(os.path.join(autotest_dir, 'template')))
+    env = Environment(loader=FileSystemLoader(os.path.join(autotest_dir, 'template')), autoescape=True)
     mission = env.get_template('scrimmage.xml').render(**config)
     tmp = mkstemp()
     atexit.register(os.remove, tmp[1])
