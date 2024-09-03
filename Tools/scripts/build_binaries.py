@@ -259,7 +259,7 @@ is bob we will attempt to checkout bob-AVR'''
     def first_line_of_filepath(self, filepath):
         '''returns the first (text) line from filepath'''
         with open(filepath) as fh:
-            line = fh.readline()
+            line = fh.readline(5_000_000)
         return line
 
     def skip_build(self, buildtag, builddir):

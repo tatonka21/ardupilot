@@ -96,7 +96,7 @@ class EnumDocco(object):
             enum_name = None
             in_class = None
             while True:
-                line = f.readline()
+                line = f.readline(5_000_000)
                 if line == "":
                     break
                 line = line.rstrip()
