@@ -32,7 +32,7 @@ def parse_file(file_name):
     methods = []
     with open(file_name) as fp:
         while True:
-            line = fp.readline()
+            line = fp.readline(5_000_000)
             if not line:
                 break
 
