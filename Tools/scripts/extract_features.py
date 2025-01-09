@@ -14,6 +14,7 @@ import sys
 import time
 import build_options
 import select
+from security import safe_command
 
 
 if sys.version_info[0] < 3:
@@ -232,8 +233,7 @@ class ExtractFeatures(object):
         """Swiped from build_binaries.py."""
         if show_output:
             self.progress("Running (%s)" % " ".join(cmd_list))
-        p = subprocess.Popen(
-            cmd_list,
+        p = safe_command.run(subprocess.Popen, cmd_list,
             stdin=None,
             stdout=subprocess.PIPE,
             close_fds=True,

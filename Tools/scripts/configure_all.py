@@ -11,6 +11,7 @@ import fnmatch
 import shutil
 
 import argparse
+from security import safe_command
 
 # modify our search path:
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../libraries/AP_HAL_ChibiOS/hwdef/scripts'))
@@ -49,7 +50,7 @@ def get_board_list():
 
 def run_program(cmd_list, build):
     print("Running (%s)" % " ".join(cmd_list))
-    retcode = subprocess.call(cmd_list)
+    retcode = safe_command.run(subprocess.call, cmd_list)
     if retcode != 0:
         print("FAILED BUILD: %s %s" % (build, ' '.join(cmd_list)))
         global failures

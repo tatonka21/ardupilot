@@ -12,6 +12,7 @@ import time
 import shutil
 import subprocess
 import sys
+from security import safe_command
 
 os.environ['PYTHONUNBUFFERED'] = '1'
 os.set_blocking(sys.stdout.fileno(), True)
@@ -121,24 +122,23 @@ class CoverageRunner(object):
         os.chdir(root_dir)
         waf_light = os.path.join(root_dir, "modules/waf/waf-light")
         self.progress("Removing previous build binaries")
-        subprocess.run([waf_light, "configure", "--debug"], check=True)
-        subprocess.run([waf_light, "clean"], check=True)
+        safe_command.run(subprocess.run, [waf_light, "configure", "--debug"], check=True)
+        safe_command.run(subprocess.run, [waf_light, "clean"], check=True)
 
         self.progress("Building examples and SITL binaries")
 
         try:
             if use_example:
                 self.progress("Building examples")
-                subprocess.run([waf_light, "configure", "--board=linux", "--debug", "--coverage"], check=True)
-                subprocess.run([waf_light, "examples"], check=True)
-            subprocess.run(
-                [self.autotest,
+                safe_command.run(subprocess.run, [waf_light, "configure", "--board=linux", "--debug", "--coverage"], check=True)
+                safe_command.run(subprocess.run, [waf_light, "examples"], check=True)
+            safe_command.run(subprocess.run, [self.autotest,
                  "--debug",
                  "--coverage",
                  "build.unit_tests"],
                 check=True)
-            subprocess.run([waf_light, "configure", "--debug", "--coverage"], check=True)
-            subprocess.run([waf_light], check=True)
+            safe_command.run(subprocess.run, [waf_light, "configure", "--debug", "--coverage"], check=True)
+            safe_command.run(subprocess.run, [waf_light], check=True)
         except subprocess.CalledProcessError as err:
             print("ERROR :")
             print(err.cmd)
@@ -157,7 +157,7 @@ class CoverageRunner(object):
 
         if use_example:
             self.progress("Running run.examples")
-            subprocess.run([self.autotest,
+            safe_command.run(subprocess.run, [self.autotest,
                             "--timeout=" + str(TIMEOUT),
                             "--debug",
                             "--coverage",
@@ -165,8 +165,7 @@ class CoverageRunner(object):
                             "--speedup=" + str(SPEEDUP),
                             "run.examples"], check=self.check_tests)
         self.progress("Running run.unit_tests")
-        subprocess.run(
-            [self.autotest,
+        safe_command.run(subprocess.run, [self.autotest,
              "--timeout=" + str(TIMEOUT),
              "--debug",
              "--no-clean",
@@ -178,7 +177,7 @@ class CoverageRunner(object):
         for test in test_list:
             self.progress("Running test.%s" % test)
             try:
-                subprocess.run([self.autotest,
+                safe_command.run(subprocess.run, [self.autotest,
                                 "--timeout=" + str(TIMEOUT),
                                 "--debug",
                                 "--no-clean",

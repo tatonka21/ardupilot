@@ -29,6 +29,7 @@ import tempfile
 import threading
 import time
 import board_list
+from security import safe_command
 
 if sys.version_info[0] < 3:
     running_python3 = False
@@ -219,8 +220,7 @@ class SizeCompareBranches(object):
             if cwd is None:
                 cwd = "."
             self.progress(f"Running ({cmd}) in ({cwd})")
-        p = subprocess.Popen(
-            cmd_list,
+        p = safe_command.run(subprocess.Popen, cmd_list,
             stdin=None,
             stdout=subprocess.PIPE,
             close_fds=True,

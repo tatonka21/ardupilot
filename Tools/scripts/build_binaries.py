@@ -28,6 +28,7 @@ import build_binaries_history
 
 import board_list
 from board_list import AP_PERIPH_BOARDS
+from security import safe_command
 
 if sys.version_info[0] < 3:
     running_python3 = False
@@ -124,7 +125,7 @@ class build_binaries(object):
     def run_program(self, prefix, cmd_list, show_output=True, env=None, force_success=False):
         if show_output:
             self.progress("Running (%s)" % " ".join(cmd_list))
-        p = subprocess.Popen(cmd_list, stdin=None,
+        p = safe_command.run(subprocess.Popen, cmd_list, stdin=None,
                              stdout=subprocess.PIPE, close_fds=True,
                              stderr=subprocess.STDOUT, env=env)
         output = ""

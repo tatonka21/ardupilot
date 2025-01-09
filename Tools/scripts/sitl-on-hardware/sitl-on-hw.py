@@ -10,6 +10,8 @@ import os
 import tempfile
 
 from argparse import ArgumentParser
+from security import safe_command
+
 parser = ArgumentParser("SITL on hardware builder")
 parser.add_argument("--board", default=None, help="board type")
 parser.add_argument("--vehicle", default=None, help="vehicle type")
@@ -25,7 +27,7 @@ extra_hwdef = None
 def run_program(cmd_list):
     '''run a program from a command list'''
     print("Running (%s)" % " ".join(cmd_list))
-    retcode = subprocess.call(cmd_list)
+    retcode = safe_command.run(subprocess.call, cmd_list)
     if retcode != 0:
        print("FAILED: %s" % (' '.join(cmd_list)))
        global extra_hwdef
