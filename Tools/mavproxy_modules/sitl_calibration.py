@@ -17,10 +17,10 @@
 from __future__ import division, print_function
 import math
 from pymavlink import quaternion
-import random
 import time
 
 from MAVProxy.modules.lib import mp_module
+import secrets
 
 class CalController(object):
     def __init__(self, mpstate):
@@ -274,7 +274,7 @@ class MagcalController(CalController):
     def next_rot_att_callback(self):
         x, y, z = self.rotation_axes[self.rotation_axis_idx]
         angspeed = self.rotation_angspeed
-        angspeed += random.uniform(-1, 1) * self.rotation_angspeed_noise
+        angspeed += secrets.SystemRandom().uniform(-1, 1) * self.rotation_angspeed_noise
         self.angvel(x, y, z, angspeed)
         self.rotation_start_time = time.time()
 
@@ -284,7 +284,7 @@ class MagcalController(CalController):
 
         if self.rotation_axis_idx == 0:
             yaw_inc = self.yaw_increment
-            yaw_inc += random.uniform(-1, 1) * self.yaw_noise_range
+            yaw_inc += secrets.SystemRandom().uniform(-1, 1) * self.yaw_noise_range
             self.yaw = (self.yaw + yaw_inc) % (2 * math.pi)
 
         self.rotation_start_time = 0
