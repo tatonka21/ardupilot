@@ -11,6 +11,7 @@ import os
 import re
 import subprocess
 import time
+from security import safe_command
 
 
 class CheckAutoTestSpeedup(object):
@@ -37,7 +38,7 @@ class CheckAutoTestSpeedup(object):
         '''copied in from build_binaries.py'''
         '''run cmd_list, spewing and setting output in self'''
         self.progress("Running (%s)" % " ".join(cmd_list))
-        p = subprocess.Popen(cmd_list,
+        p = safe_command.run(subprocess.Popen, cmd_list,
                              stdin=None,
                              close_fds=True,
                              stdout=subprocess.PIPE,

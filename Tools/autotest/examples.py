@@ -14,6 +14,7 @@ import subprocess
 import time
 
 from pysim import util
+from security import safe_command
 
 
 def run_example(filepath, valgrind=False, gdb=False):
@@ -24,7 +25,7 @@ def run_example(filepath, valgrind=False, gdb=False):
         cmd.append("gdb")
     cmd.append(filepath)
     print("Running: (%s)" % str(cmd))
-    bob = subprocess.Popen(cmd, stdin=None, close_fds=True)
+    bob = safe_command.run(subprocess.Popen, cmd, stdin=None, close_fds=True)
     retcode = bob.poll()
     time.sleep(10)
     print("pre-kill retcode: %s" % str(retcode))

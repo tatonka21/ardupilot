@@ -12,6 +12,7 @@ import subprocess
 import sys
 
 import argparse
+from security import safe_command
 
 os.environ['PYTHONUNBUFFERED'] = '1'
 
@@ -34,8 +35,7 @@ class AStyleChecker(object):
         astyle_command = ["astyle", "--dry-run"]
         astyle_command.append("--options=Tools/CodeStyle/astylerc")
         astyle_command.extend(self.files_to_check)
-        ret = subprocess.run(
-            astyle_command,
+        ret = safe_command.run(subprocess.run, astyle_command,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True
