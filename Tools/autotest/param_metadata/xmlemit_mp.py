@@ -3,6 +3,7 @@ from xml.sax.saxutils import escape, quoteattr
 from emit import Emit
 from param import known_param_fields, known_units
 from lxml import etree
+import lxml.etree
 
 # Emit ArduPilot documentation in an machine readable XML format for Mission Planner
 class XmlEmitMP(Emit):
@@ -22,7 +23,7 @@ class XmlEmitMP(Emit):
         self.f.close()
         # sort and reformat XML
         parser = etree.XMLParser(remove_blank_text=True)
-        tree = etree.parse(self.mp_fname, parser)
+        tree = etree.parse(self.mp_fname, parser, parser=lxml.etree.XMLParser(resolve_entities=False))
         root = tree.getroot()
         vehicle = tree.find(self.gname)
         sort_xml_node(vehicle)
