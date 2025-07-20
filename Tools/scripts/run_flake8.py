@@ -12,6 +12,7 @@ import subprocess
 import sys
 
 import argparse
+from security import safe_command
 
 os.environ['PYTHONUNBUFFERED'] = '1'
 
@@ -27,7 +28,7 @@ class Flake8Checker(object):
     def check(self):
         for path in self.files_to_check:
             self.progress("Checking (%s)" % path)
-        ret = subprocess.run(["flake8", "--show-source"] + self.files_to_check,
+        ret = safe_command.run(subprocess.run, ["flake8", "--show-source"] + self.files_to_check,
                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         if ret.returncode != 0:
             self.progress("Flake8 check failed: (%s)" % (ret.stdout))

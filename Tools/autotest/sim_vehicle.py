@@ -30,6 +30,7 @@ import math
 
 from pysim import util
 from pysim import vehicleinfo
+from security import safe_command
 
 
 # List of open terminal windows for macosx
@@ -158,7 +159,7 @@ def cygwin_pidof(proc_name):
     """ Thanks to kata198 for this:
     https://github.com/kata198/cygwin-ps-misc/blob/master/pidof
     """
-    pipe = subprocess.Popen("ps -ea | grep " + proc_name,
+    pipe = safe_command.run(subprocess.Popen, "ps -ea | grep " + proc_name,
                             shell=True,
                             stdout=subprocess.PIPE)
     output_lines = pipe.stdout.read().decode('utf-8').replace("\r", "").split("\n")
@@ -583,7 +584,7 @@ def run_cmd_blocking(what, cmd, quiet=False, check=False, **kw):
         progress_cmd(what, cmd)
 
     try:
-        p = subprocess.Popen(cmd, **kw)
+        p = safe_command.run(subprocess.Popen, cmd, **kw)
         ret = os.waitpid(p.pid, 0)
     except Exception as e:
         print("[%s] An exception has occurred with command: '%s'" % (what, (' ').join(cmd)))
@@ -607,7 +608,7 @@ def run_in_terminal_window(name, cmd, **kw):
 
     if under_macos() and os.environ.get('DISPLAY'):
         # on MacOS record the window IDs so we can close them later
-        out = subprocess.Popen(runme, stdout=subprocess.PIPE, **kw).communicate()[0]
+        out = safe_command.run(subprocess.Popen, runme, stdout=subprocess.PIPE, **kw).communicate()[0]
         out = out.decode('utf-8')
         p = re.compile('tab 1 of window id (.*)')
 
@@ -626,7 +627,7 @@ def run_in_terminal_window(name, cmd, **kw):
         else:
             progress("Cannot find %s process terminal" % name)
     else:
-        subprocess.Popen(runme, **kw)
+        safe_command.run(subprocess.Popen, runme, **kw)
 
 
 tracker_uarta = None  # blemish
@@ -795,7 +796,7 @@ def start_vehicle(binary, opts, stuff, spawns=None):
     if opts.OSDMSP:
         path += "," + os.path.join(root_dir, "libraries/AP_MSP/Tools/osdtest.parm")
         path += "," + os.path.join(autotest_dir, "default_params/msposd.parm")
-        subprocess.Popen([os.path.join(root_dir, "libraries/AP_MSP/Tools/msposd.py")])
+        safe_command.run(subprocess.Popen, [os.path.join(root_dir, "libraries/AP_MSP/Tools/msposd.py")])
 
     if path is not None and len(path) > 0:
         cmd.extend(["--defaults", path])

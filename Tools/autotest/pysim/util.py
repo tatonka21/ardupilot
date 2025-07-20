@@ -1,4 +1,5 @@
 from __future__ import print_function
+from security import safe_command
 
 '''
 AP_FLAKE8_CLEAN
@@ -78,11 +79,11 @@ def run_cmd(cmd, directory=".", show=True, output=False, checkfail=True):
     if show:
         print("Running: (%s) in (%s)" % (cmd_as_shell(cmd), directory,))
     if output:
-        return subprocess.Popen(cmd, shell=shell, stdout=subprocess.PIPE, cwd=directory).communicate()[0]
+        return safe_command.run(subprocess.Popen, cmd, shell=shell, stdout=subprocess.PIPE, cwd=directory).communicate()[0]
     elif checkfail:
         return subprocess.check_call(cmd, shell=shell, cwd=directory)
     else:
-        return subprocess.call(cmd, shell=shell, cwd=directory)
+        return safe_command.run(subprocess.call, cmd, shell=shell, cwd=directory)
 
 
 def rmfile(path):
@@ -369,7 +370,7 @@ def valgrind_log_filepath(binary, model):
 
 def kill_screen_gdb():
     cmd = ["screen", "-X", "-S", "ardupilot-gdb", "quit"]
-    subprocess.Popen(cmd)
+    safe_command.run(subprocess.Popen, cmd)
 
 
 def kill_mac_terminal():
@@ -564,7 +565,7 @@ def start_SITL(binary,
         runme = [os.path.join(autotest_dir, "run_in_terminal_window.sh"), 'mactest']
         runme.extend(cmd)
         print(cmd)
-        out = subprocess.Popen(runme, stdout=subprocess.PIPE).communicate()[0]
+        out = safe_command.run(subprocess.Popen, runme, stdout=subprocess.PIPE).communicate()[0]
         out = out.decode('utf-8')
         p = re.compile('tab 1 of window id (.*)')
 
@@ -584,7 +585,7 @@ def start_SITL(binary,
             print("Cannot find %s process terminal" % binary)
         child = FakeMacOSXSpawn()
     elif gdb and not os.getenv('DISPLAY'):
-        subprocess.Popen(cmd)
+        safe_command.run(subprocess.Popen, cmd)
         atexit.register(kill_screen_gdb)
         # we are expected to return a pexpect wrapped around the
         # stdout of the ArduPilot binary.  Not going to happen until
@@ -621,7 +622,7 @@ def mavproxy_cmd():
 def MAVProxy_version():
     """return the current version of mavproxy as a tuple e.g. (1,8,8)"""
     command = "%s --version" % mavproxy_cmd()
-    output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE).communicate()[0]
+    output = safe_command.run(subprocess.Popen, command, shell=True, stdout=subprocess.PIPE).communicate()[0]
     output = output.decode('ascii')
     match = re.search("MAVProxy Version: ([0-9]+)[.]([0-9]+)[.]([0-9]+)", output)
     if match is None:

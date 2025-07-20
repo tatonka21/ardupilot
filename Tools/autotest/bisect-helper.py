@@ -64,6 +64,7 @@ import shlex
 import sys
 import time
 import traceback
+from security import safe_command
 
 
 def get_exception_stacktrace(e):
@@ -118,7 +119,7 @@ class Bisect(object):
         '''copied in from build_binaries.py'''
         '''run cmd_list, spewing and setting output in self'''
         self.progress("Running (%s)" % " ".join(cmd_list))
-        p = subprocess.Popen(cmd_list,
+        p = safe_command.run(subprocess.Popen, cmd_list,
                              stdin=None,
                              close_fds=True,
                              stdout=subprocess.PIPE,

@@ -12,6 +12,8 @@ import fnmatch
 
 # get command line arguments
 from argparse import ArgumentParser
+from security import safe_command
+
 parser = ArgumentParser(description='make_secure_bl')
 parser.add_argument("--signing-key", type=str, default=None, help="signing key for secure bootloader")
 parser.add_argument("--debug", action='store_true', default=False, help="build with debug symbols")
@@ -39,7 +41,7 @@ def get_board_list():
 
 def run_program(cmd_list):
     print("Running (%s)" % " ".join(cmd_list))
-    retcode = subprocess.call(cmd_list)
+    retcode = safe_command.run(subprocess.call, cmd_list)
     if retcode != 0:
         print("Build failed: %s" % ' '.join(cmd_list))
         return False

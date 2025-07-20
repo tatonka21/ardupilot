@@ -10,13 +10,14 @@ import os
 import shutil
 import subprocess
 import sys
+from security import safe_command
 
 os.environ['PYTHONUNBUFFERED'] = '1'
 
 
 def run_program(cmd_list):
     print("Running (%s)" % " ".join(cmd_list))
-    retcode = subprocess.call(cmd_list)
+    retcode = safe_command.run(subprocess.call, cmd_list)
     if retcode != 0:
         print("Build failed: %s" % ' '.join(cmd_list))
         sys.exit(1)

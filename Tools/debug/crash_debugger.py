@@ -22,6 +22,7 @@ import time
 from queue import Queue, Empty
 from threading  import Thread
 import signal
+from security import safe_command
 
 def serial_debug(args):
     global spinner, process_cmd
@@ -109,7 +110,7 @@ def swd_debug(args):
                     '-ex', 'continue',
                     '-ex', 'run',
                     args.elf_file]
-            p = subprocess.Popen(cmd, stdout=subprocess.PIPE, close_fds=ON_POSIX)
+            p = safe_command.run(subprocess.Popen, cmd, stdout=subprocess.PIPE, close_fds=ON_POSIX)
             q = Queue()
             t = Thread(target=enqueue_output, args=(p.stdout, q))
             t.daemon = True # thread dies with the program
@@ -143,7 +144,7 @@ def swd_debug(args):
                     '-x', os.path.join(dir_path, 'crash_dump.scr'),
                     args.elf_file]
             # We are now storing the stack dump into the file
-            p = subprocess.Popen(cmd, stdout=subprocess.PIPE, close_fds=ON_POSIX)
+            p = safe_command.run(subprocess.Popen, cmd, stdout=subprocess.PIPE, close_fds=ON_POSIX)
             q = Queue()
             t = Thread(target=enqueue_output, args=(p.stdout, q))
             t.daemon = True # thread dies with the program
@@ -225,7 +226,7 @@ if __name__ == '__main__':
         process_cmd = "arm-none-eabi-gdb -nx --batch --quiet " + args.elf_file + "  -ex \"set target-charset ASCII\" -ex \"target remote | " + crashdebug_exe + " --elf " + args.elf_file + " --dump " + dump_file + "\" -ex \"set print pretty on\" -ex \"bt full\" -ex \"quit\""
         print(process_cmd)
         # We can call GDB and CrashDebug using the command and print the results
-        process = subprocess.Popen(process_cmd, shell=True, stdout=subprocess.PIPE)
+        process = safe_command.run(subprocess.Popen, process_cmd, shell=True, stdout=subprocess.PIPE)
         output, error = process.communicate()
 
         print(output.decode("utf-8"))
